@@ -2,6 +2,7 @@
 const express = require('express')
 const app = express()
 const port = 3000
+// install Todo model
 const Todo = require('./models/todo')
 
 //install mongoose
@@ -12,6 +13,10 @@ mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUn
 const exphbs = require('express-handlebars')
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs'}))
 app.set('view engine', 'hbs')
+
+// install body-parser
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }))
 
 const db = mongoose.connection
 db.on('error', () => {
@@ -29,6 +34,17 @@ app.get('/', (req, res) => {
     .lean()
     .then(todos => res.render('index', { todos: todos}))
     .catch(error => console.error(error))
+})
+
+app.get('/todos/new', (req, res) => {
+  return res.render('new')
+})
+
+app.post('/todos', (req, res) => {
+  const name = req.body.name;
+  return Todo.create({name: name})
+  .then( () => res.redirect('/'))
+  .catch( error => console.log(error))
 })
 
 app.listen(port, () => {
