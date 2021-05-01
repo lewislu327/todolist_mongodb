@@ -2,6 +2,7 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const Todo = require('./models/todo')
 
 //install mongoose
 const mongoose = require('mongoose')
@@ -23,7 +24,11 @@ db.once('open', () => {
 
 // 設定首頁路由
 app.get('/', (req, res) => {
-  res.render('index')
+  // get all todo infos
+  Todo.find()
+    .lean()
+    .then(todos => res.render('index', { todos: todos}))
+    .catch(error => console.error(error))
 })
 
 app.listen(port, () => {
