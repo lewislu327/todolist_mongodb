@@ -35,16 +35,25 @@ app.get('/', (req, res) => {
     .then(todos => res.render('index', { todos: todos}))
     .catch(error => console.error(error))
 })
-
+// route for create todo page
 app.get('/todos/new', (req, res) => {
   return res.render('new')
 })
-
+// route for create new todo object
 app.post('/todos', (req, res) => {
   const name = req.body.name;
   return Todo.create({name: name})
   .then( () => res.redirect('/'))
   .catch( error => console.log(error))
+})
+
+// route for todo detail info
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id 
+  return Todo.findById(id)
+  .lean()
+  .then( (todo) => res.render('detail', {todo}))
+  .catch(error => console.log(error))
 })
 
 app.listen(port, () => {
