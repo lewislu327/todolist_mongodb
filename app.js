@@ -1,22 +1,29 @@
 // 載入 express 並建構應用程式伺服器
 const express = require('express')
+// install handlebars template engine 
+const exphbs = require('express-handlebars')
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
+// require method override
+const methOverride = require('method-override')
+const Todo = require('./models/todo')
+
 const app = express()
 const port = 3000
 // install Todo model
-const Todo = require('./models/todo')
+
 
 //install mongoose
-const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology: true } )
 
-// install handlebars template engine 
-const exphbs = require('express-handlebars')
+
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs'}))
 app.set('view engine', 'hbs')
 
-// install body-parser
-const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use(express.urlencoded({ extended: true }))
+
+app.use(methOverride('_method'))
 
 const db = mongoose.connection
 db.on('error', () => {
@@ -67,7 +74,7 @@ app.get('/todos/:id/edit', (req, res) => {
 })
 
 // route to post edited todo object
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id 
   const { name, isDone } = req.body
   return Todo.findById(id)
@@ -81,7 +88,7 @@ app.post('/todos/:id/edit', (req, res) => {
 })
 
 // route to delete todo object
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id) 
    .then( (todo) => todo.remove())
