@@ -3,6 +3,7 @@ const express = require('express')
 // install handlebars template engine 
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser');
+const session = require('express-session')
 
 // require method override
 const methOverride = require('method-override')
@@ -16,6 +17,11 @@ require('./config/mongoose')
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
+app.use(session({
+  secret: "someRandomStuffs",
+  resave: false,
+  saveUninitialized: true
+}))
 app.use(express.urlencoded({ extended: true }))
 app.use(methOverride('_method'))
 
