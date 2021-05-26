@@ -4,14 +4,14 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser');
 const session = require('express-session')
-
-// require method override
+const usePassport = require('./config/passport')
 const methOverride = require('method-override')
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
-const routes = require('./routes')
+const routes = require('./routes');
+const { use } = require('./routes');
 require('./config/mongoose')
 
 
@@ -24,7 +24,7 @@ app.use(session({
 }))
 app.use(express.urlencoded({ extended: true }))
 app.use(methOverride('_method'))
-
+usePassport(app)
 app.use(routes)
 
 
