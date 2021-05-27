@@ -1,6 +1,4 @@
-// 載入 express 並建構應用程式伺服器
 const express = require('express')
-// install handlebars template engine 
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser');
 const session = require('express-session')
