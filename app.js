@@ -6,8 +6,12 @@ const usePassport = require('./config/passport')
 const methOverride = require('method-override')
 const flash = require('connect-flash')
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 const routes = require('./routes');
 const { use } = require('./routes');
@@ -17,7 +21,7 @@ require('./config/mongoose')
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(session({
-  secret: "someRandomStuffs",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
