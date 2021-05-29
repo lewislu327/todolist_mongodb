@@ -1,11 +1,33 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const Todo = require('../todo')
 const db = require('../../config/mongoose')
+const User = require('../user')
+const bcrypt = require('bcryptjs')
+
+
+const SEED_USER= {
+  name: 'root',
+  email:'root@email.com',
+  password:'123456'
+}
 
 db.once('open', () => {
-  console.log('mongodb connected!')
-  for (let i = 0; i < 10; i++) {
-    Todo.create({name: `name-${i}`
+  bcrypt
+    .genSalt(10)
+    .then(salt => bcrypt.hash(SEED_USER.password, salt))
+    .then(hash => User.create({
+      name: SEED_USER.name,
+      email: SEED_USER.email,
+      password: hash 
+    }))
+    .then(user => {
+      const userId = user._id
+      return Promise.all( Array.from({ length:10 }, (_, i) => Todo.create({ name:`name-${i}`, userId} )))
     })
-  }
-  console.log('done')
+    .then(() => {
+      console.log('done!')
+      process.exit()
+    })
 })
