@@ -1,16 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const Todo = require('../../models/todo')
+const todoController = require('../../controllers/todoController')
 
-router.get('/', async (req, res) => {
-  const userId = req.user._id
-
-  try {
-    const todos = await Todo.find({ userId }).lean().sort({ name: 'asc' })
-    return res.render('index', { todos })
-  } catch (error) {
-    console.error(error)
-  }
-})
+router.get('/', todoController.getTodos)
 
 module.exports = router
